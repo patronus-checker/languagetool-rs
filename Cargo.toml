@@ -1,6 +1,11 @@
 [package]
 authors = ["Jan Tojnar <jtojnar@gmail.com>"]
 name = "languagetool"
+description = "Bindings for LanguageTool grammar checking server"
+repository = "https://github.com/patronus-checker/languagetool-rs.git"
+readme = "README.md"
+keywords = ["languagetool", "grammar", "grammar-checking", "nlp"]
+license = "MIT"
 version = "0.1.0"
 
 [dependencies]

@@ -2,7 +2,11 @@ extern crate reqwest;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate serde_json;
 
+use serde::{Deserialize, Deserializer};
+use serde::de::Error as DeError;
+use serde_json::Value;
 use std::fmt;
 use std::error::Error as StdError;
 
@@ -95,7 +99,9 @@ pub struct Software {
     pub name: String,
     pub version: String,
     pub build_date: String,
-    pub api_version: String,
+    // In older versions the version is a String: https://github.com/languagetool-org/languagetool/issues/712
+    #[serde(deserialize_with = "number_or_numeric_string")]
+    pub api_version: i64,
     pub status: Option<String>,
 }
 
@@ -187,5 +193,17 @@ impl LanguageTool {
         } else {
             Err(Error::BadStatusError(*res.status()))
         }
+    }
+}
+
+fn number_or_numeric_string<'de, D>(de: D) -> Result<i64, D::Error>
+    where D: Deserializer<'de>
+{
+    let helper: Value = Deserialize::deserialize(de)?;
+
+    match helper {
+        Value::Number(n) => n.as_i64().ok_or_else(|| DeError::custom("Not an integer")),
+        Value::String(s) => s.parse().map_err(DeError::custom),
+        _ => Err(DeError::custom("Neither number nor a numeric string")),
     }
 }

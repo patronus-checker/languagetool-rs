@@ -99,7 +99,8 @@ pub struct Software {
     pub name: String,
     pub version: String,
     pub build_date: String,
-    // In older versions the version is a String: https://github.com/languagetool-org/languagetool/issues/712
+    // In older versions the version is a String:
+    // https://github.com/languagetool-org/languagetool/issues/712
     #[serde(deserialize_with = "number_or_numeric_string")]
     pub api_version: i64,
     pub status: Option<String>,
@@ -163,9 +164,9 @@ impl LanguageTool {
         let http_client = reqwest::Client::new().map_err(Error::ReqwestError)?;
 
         Ok(LanguageTool {
-               instance_url: instance_url,
-               http_client: http_client,
-           })
+            instance_url: instance_url,
+            http_client: http_client,
+        })
     }
 
     pub fn list_languages(&self) -> Result<Vec<Language>, Error> {
@@ -197,7 +198,8 @@ impl LanguageTool {
 }
 
 fn number_or_numeric_string<'de, D>(de: D) -> Result<i64, D::Error>
-    where D: Deserializer<'de>
+where
+    D: Deserializer<'de>,
 {
     let helper: Value = Deserialize::deserialize(de)?;
 

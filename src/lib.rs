@@ -1,7 +1,6 @@
 extern crate reqwest;
-extern crate serde;
 #[macro_use]
-extern crate serde_derive;
+extern crate serde;
 extern crate serde_json;
 
 use serde::{Deserialize, Deserializer};
@@ -160,8 +159,10 @@ pub struct Category {
 
 impl LanguageTool {
     pub fn new(instance_url: &str) -> Result<Self, Error> {
-        let instance_url = String::from(instance_url.trim_right_matches('/'));
-        let http_client = reqwest::Client::new().map_err(Error::ReqwestError)?;
+        let instance_url = String::from(instance_url.trim_end_matches('/'));
+        let http_client = reqwest::Client::builder()
+            .build()
+            .map_err(Error::ReqwestError)?;
 
         Ok(LanguageTool {
             instance_url: instance_url,
@@ -178,7 +179,7 @@ impl LanguageTool {
         if res.status().is_success() {
             res.json().map_err(Error::ReqwestError)
         } else {
-            Err(Error::BadStatusError(*res.status()))
+            Err(Error::BadStatusError(res.status()))
         }
     }
 
@@ -192,7 +193,7 @@ impl LanguageTool {
         if res.status().is_success() {
             res.json().map_err(Error::ReqwestError)
         } else {
-            Err(Error::BadStatusError(*res.status()))
+            Err(Error::BadStatusError(res.status()))
         }
     }
 }

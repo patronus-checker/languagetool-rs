@@ -3,11 +3,11 @@ extern crate reqwest;
 extern crate serde;
 extern crate serde_json;
 
-use serde::{Deserialize, Deserializer};
 use serde::de::Error as DeError;
+use serde::{Deserialize, Deserializer};
 use serde_json::Value;
-use std::fmt;
 use std::error::Error as StdError;
+use std::fmt;
 
 pub struct LanguageTool {
     instance_url: String,
@@ -171,7 +171,8 @@ impl LanguageTool {
     }
 
     pub fn list_languages(&self) -> Result<Vec<Language>, Error> {
-        let mut res = self.http_client
+        let mut res = self
+            .http_client
             .get(&(self.instance_url.clone() + "/v2/languages"))
             .send()
             .map_err(Error::ReqwestError)?;
@@ -184,7 +185,8 @@ impl LanguageTool {
     }
 
     pub fn check(&self, req: Request) -> Result<Response, Error> {
-        let mut res = self.http_client
+        let mut res = self
+            .http_client
             .post(&(self.instance_url.clone() + "/v2/check"))
             .form(&req)
             .send()

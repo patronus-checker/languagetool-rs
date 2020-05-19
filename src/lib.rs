@@ -30,16 +30,7 @@ impl fmt::Display for Error {
 }
 
 impl StdError for Error {
-    fn description(&self) -> &str {
-        match *self {
-            Error::ReqwestError(ref e) => e.description(),
-            Error::BadStatusError(ref e) => {
-                e.canonical_reason().unwrap_or("Unregistered status code")
-            }
-        }
-    }
-
-    fn cause(&self) -> Option<&StdError> {
+    fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match *self {
             Error::ReqwestError(ref e) => Some(e),
             Error::BadStatusError(_) => None,

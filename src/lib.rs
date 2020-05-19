@@ -11,7 +11,7 @@ use std::fmt;
 
 pub struct LanguageTool {
     instance_url: String,
-    http_client: reqwest::Client,
+    http_client: reqwest::blocking::Client,
 }
 
 #[derive(Debug)]
@@ -151,7 +151,7 @@ pub struct Category {
 impl LanguageTool {
     pub fn new(instance_url: &str) -> Result<Self, Error> {
         let instance_url = String::from(instance_url.trim_end_matches('/'));
-        let http_client = reqwest::Client::builder()
+        let http_client = reqwest::blocking::Client::builder()
             .build()
             .map_err(Error::ReqwestError)?;
 
@@ -162,7 +162,7 @@ impl LanguageTool {
     }
 
     pub fn list_languages(&self) -> Result<Vec<Language>, Error> {
-        let mut res = self
+        let res = self
             .http_client
             .get(&(self.instance_url.clone() + "/v2/languages"))
             .send()
@@ -176,7 +176,7 @@ impl LanguageTool {
     }
 
     pub fn check(&self, req: Request) -> Result<Response, Error> {
-        let mut res = self
+        let res = self
             .http_client
             .post(&(self.instance_url.clone() + "/v2/check"))
             .form(&req)
